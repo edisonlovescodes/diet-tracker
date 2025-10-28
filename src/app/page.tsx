@@ -9,7 +9,7 @@ import type {
   WeightHistoryEntry,
 } from "@/types/nutrition";
 import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/session";
+import { getOptionalSession } from "@/lib/session";
 
 type PageProps = {
   searchParams?: Promise<{
@@ -20,7 +20,10 @@ type PageProps = {
 type MealWithFoods = Prisma.MealGetPayload<{ include: { foods: true } }>;
 
 export default async function Home({ searchParams }: PageProps) {
-  const session = await requireSession();
+  const session = await getOptionalSession();
+  if (!session) {
+    return <GuestLanding />;
+  }
   const params = searchParams ? await searchParams : undefined;
 
   const selectedDate = parseSelectedDate(params?.date);
@@ -419,4 +422,36 @@ function getWeekNumber(date: Date) {
   const firstThursday = new Date(target.getFullYear(), 0, 4);
   const diff = target.valueOf() - firstThursday.valueOf();
   return 1 + Math.round(diff / (7 * 24 * 60 * 60 * 1000));
+}
+
+function GuestLanding() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6">
+      <div className="max-w-lg space-y-6 rounded-3xl border border-black/5 bg-white p-10 text-center shadow-sm shadow-black/5">
+        <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
+          Macro Tracker for Whop
+        </span>
+        <h1 className="text-3xl font-semibold text-foreground">
+          Open inside your Whop experience
+        </h1>
+        <p className="text-sm leading-6 text-foreground/70">
+          This dashboard pulls your members, meals, and weigh-ins using Whop’s
+          secure session token. Launch the app from your Whop creator account
+          (or test via the Whop dev proxy) to start logging macros.
+        </p>
+        <div className="space-y-2 rounded-2xl border border-dashed border-foreground/20 bg-muted/40 p-4 text-left text-xs text-foreground/60">
+          <p className="font-semibold text-foreground/70">Quick steps:</p>
+          <ol className="space-y-1 list-decimal pl-4">
+            <li>Enable the Whop dev proxy and open the app.</li>
+            <li>Log a weigh-in or meal to see live data.</li>
+            <li>Invite members once you’re ready for beta.</li>
+          </ol>
+        </div>
+        <p className="text-xs text-foreground/50">
+          Need help? Drop the app into your Whop experience and ping us to wire
+          up the rest of the flows.
+        </p>
+      </div>
+    </main>
+  );
 }

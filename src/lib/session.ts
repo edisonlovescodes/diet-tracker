@@ -30,7 +30,7 @@ export class UnauthorizedError extends Error {
 }
 
 export async function requireSession() {
-  const headerList = await headers();
+  const headerList = headers();
   return requireSessionFromHeaders(headerList);
 }
 
@@ -83,6 +83,17 @@ async function requireSessionFromHeaders(
     user: toSessionUser(user),
     macroTarget: user.macroTarget,
   };
+}
+
+export async function getOptionalSession() {
+  try {
+    return await requireSession();
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return null;
+    }
+    throw error;
+  }
 }
 
 async function ensureUser(id: string) {
