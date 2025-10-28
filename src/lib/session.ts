@@ -30,7 +30,7 @@ export class UnauthorizedError extends Error {
 }
 
 export async function requireSession() {
-  const headerList = headers();
+  const headerList = await headers();
   return requireSessionFromHeaders(headerList);
 }
 
