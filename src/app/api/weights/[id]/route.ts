@@ -20,8 +20,9 @@ const updateSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
+  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
     const payload = updateSchema.parse(await request.json());
@@ -54,8 +55,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
+  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
 

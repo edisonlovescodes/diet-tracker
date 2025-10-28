@@ -12,8 +12,9 @@ import {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
+  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
     const meal = await prisma.meal.findUnique({
@@ -33,8 +34,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
+  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
     const payload = updateMealSchema.parse(await request.json());
@@ -99,8 +101,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
+  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
 
