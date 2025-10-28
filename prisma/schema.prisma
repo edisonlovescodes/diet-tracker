@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model User {
+  id          String        @id @map("_id")
+  email       String?       @unique
+  displayName String?
+  macroTarget MacroTarget?
+  meals       Meal[]
+  weightLogs  WeightLog[]
+  customFoods CustomFood[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model MacroTarget {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique
+  calories  Int?
+  protein   Int
+  carbs     Int
+  fats      Int
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WeightLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String
+  recordedFor DateTime @default(now())
+  weightLbs   Float
+  note        String?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, recordedFor])
+}
+
+model Meal {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  name      String
+  loggedAt  DateTime   @default(now())
+  protein   Float      @default(0)
+  carbs     Float      @default(0)
+  fats      Float      @default(0)
+  notes     String?
+  foods     MealFood[]
+  createdAt DateTime   @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, loggedAt])
+}
+
+model MealFood {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  mealId       String
+  foodId       String?
+  customFoodId String?
+  source       MealFoodSource
+  name         String
+  brand        String?
+  servingUnit  String?
+  quantity     Float          @default(1)
+  protein      Float          @default(0)
+  carbs        Float          @default(0)
+  fats         Float          @default(0)
+  calories     Float?
+  createdAt    DateTime       @default(now())
+
+  meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  food Food? @relation(fields: [foodId], references: [id])
+  customFood CustomFood? @relation(fields: [customFoodId], references: [id])
+
+  @@index([mealId])
+  @@index([foodId])
+  @@index([customFoodId])
+}
+
+model Food {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  externalId      String?  @unique
+  source          FoodSource
+  name            String
+  brand           String?
+  servingSize     Float?
+  servingUnit     String?
+  proteinPerUnit  Float    @default(0)
+  carbsPerUnit    Float    @default(0)
+  fatsPerUnit     Float    @default(0)
+  caloriesPerUnit Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  mealFoods MealFood[]
+}
+
+model CustomFood {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String
+  name            String
+  brand           String?
+  servingSize     Float
+  servingUnit     String
+  proteinPerUnit  Float    @default(0)
+  carbsPerUnit    Float    @default(0)
+  fatsPerUnit     Float    @default(0)
+  caloriesPerUnit Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealFoods MealFood[]
+}
+
+enum FoodSource {
+  USDA
+  CUSTOM
+}
+
+enum MealFoodSource {
+  USDA
+  CUSTOM
+  QUICK_ADD
+}
