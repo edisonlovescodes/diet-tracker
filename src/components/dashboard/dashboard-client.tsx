@@ -39,6 +39,7 @@ type MealDisplay = Meal & {
 
 type DashboardClientProps = {
   session: Session;
+  experienceId?: string;
   weekNumber: number;
   weekDays: WeekDay[];
   macroTargets: MacroBlock;
@@ -58,6 +59,7 @@ type DashboardClientProps = {
 export function DashboardClient(props: DashboardClientProps) {
   const {
     session,
+    experienceId,
     weekNumber,
     weekDays,
     macroTargets,
@@ -172,6 +174,11 @@ export function DashboardClient(props: DashboardClientProps) {
             <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
               Dialed-in Nutrition
             </h1>
+            {experienceId ? (
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-foreground/40">
+                Experience #{experienceId}
+              </p>
+            ) : null}
             <p className="mt-1 text-sm text-foreground/60">
               Keep logging meals and weigh-ins to stay aligned with your RP targets.
             </p>
