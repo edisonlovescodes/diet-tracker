@@ -12,13 +12,13 @@ import {
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
+    const { id } = await context.params;
     const meal = await prisma.meal.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { foods: true },
     });
 
@@ -34,15 +34,15 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
     const payload = updateMealSchema.parse(await request.json());
+    const { id } = await context.params;
 
     const existing = await prisma.meal.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { foods: true },
     });
 
@@ -101,14 +101,14 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
+    const { id } = await context.params;
 
     const existing = await prisma.meal.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existing || existing.userId !== session.user.id) {

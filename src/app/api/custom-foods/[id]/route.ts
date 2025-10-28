@@ -11,15 +11,15 @@ const updateSchema = customFoodSchema.partial();
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
     const payload = updateSchema.parse(await request.json());
+    const { id } = await context.params;
 
     const existing = await prisma.customFood.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existing || existing.userId !== session.user.id) {
@@ -49,14 +49,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
-
+    const { id } = await context.params;
     const existing = await prisma.customFood.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existing || existing.userId !== session.user.id) {

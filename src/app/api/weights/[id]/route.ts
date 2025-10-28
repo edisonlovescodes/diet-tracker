@@ -20,15 +20,15 @@ const updateSchema = z.object({
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
     const payload = updateSchema.parse(await request.json());
+    const { id } = await context.params;
 
     const existing = await prisma.weightLog.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existing || existing.userId !== session.user.id) {
@@ -39,7 +39,7 @@ export async function PATCH(
     }
 
     const weightLog = await prisma.weightLog.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         weightLbs: payload.weightLbs ?? existing.weightLbs,
         recordedFor: payload.recordedFor ?? existing.recordedFor,
@@ -55,14 +55,14 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { params } = context;
   try {
     const session = await requireSessionFromRequest(request);
+    const { id } = await context.params;
 
     const existing = await prisma.weightLog.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existing || existing.userId !== session.user.id) {
@@ -73,7 +73,7 @@ export async function DELETE(
     }
 
     await prisma.weightLog.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
