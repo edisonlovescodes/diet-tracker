@@ -5,7 +5,7 @@ import {
   requireSessionFromRequest,
   UnauthorizedError,
 } from "@/lib/session";
-import { customFoodSchema } from "@/app/api/custom-foods/route";
+import { customFoodSchema } from "@/app/api/custom-foods/schemas";
 
 const updateSchema = customFoodSchema.partial();
 
