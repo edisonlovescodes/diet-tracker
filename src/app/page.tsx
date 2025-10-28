@@ -1,4 +1,4 @@
-import type { Prisma, WeightLog } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import type { Meal } from "@/components/dashboard/meal-card";
 import type { WeightPoint } from "@/components/charts/weight-trend";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
@@ -368,7 +368,9 @@ function calculateStreakDays(recentMeals: { loggedAt: Date }[], startDate: Date)
   return streak;
 }
 
-function buildWeightSeries(logs: WeightLog[]) {
+function buildWeightSeries(
+  logs: Array<{ recordedFor: Date; weightLbs: number }>,
+) {
   const alpha = 2 / (7 + 1);
   let trend = 0;
   const series: WeightPoint[] = [];
@@ -392,7 +394,9 @@ function buildWeightSeries(logs: WeightLog[]) {
   return series;
 }
 
-function calculateWeeklyChange(logs: WeightLog[]) {
+function calculateWeeklyChange(
+  logs: Array<{ recordedFor: Date; weightLbs: number }>,
+) {
   if (logs.length < 2) return null;
   const latest = logs.at(-1)!;
   const referenceDate = addDays(latest.recordedFor, -7);
