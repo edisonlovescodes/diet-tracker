@@ -12,17 +12,18 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 
 type PageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     date?: string;
-  };
+  }>;
 };
 
 type MealWithFoods = Prisma.MealGetPayload<{ include: { foods: true } }>;
 
 export default async function Home({ searchParams }: PageProps) {
   const session = await requireSession();
+  const params = searchParams ? await searchParams : undefined;
 
-  const selectedDate = parseSelectedDate(searchParams?.date);
+  const selectedDate = parseSelectedDate(params?.date);
   const dayRange = getDayRange(selectedDate);
   const weekRange = getWeekRange(selectedDate);
   const streakRangeStart = addDays(dayRange.start, -30);
