@@ -96,12 +96,22 @@ async function ensureUser(id: string) {
   }
 
   const profile = await fetchWhopProfile(id);
+  const profileEmail =
+    profile && typeof profile === "object" && "email" in profile
+      ? (profile.email as string | null | undefined)
+      : null;
+  const profileDisplayName =
+    profile && typeof profile === "object" && "display_name" in profile
+      ? (profile.display_name as string | null | undefined)
+      : profile && typeof profile === "object" && "username" in profile
+        ? (profile.username as string | null | undefined)
+        : null;
 
   return prisma.user.create({
     data: {
       id,
-      email: profile?.email ?? null,
-      displayName: profile?.display_name ?? profile?.username ?? null,
+      email: profileEmail ?? null,
+      displayName: profileDisplayName ?? null,
       macroTarget: {
         create: {
           calories: DEFAULT_MACROS.calories,
