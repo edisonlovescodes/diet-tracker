@@ -368,6 +368,44 @@ export function DashboardClient(props: DashboardClientProps) {
             </div>
           </aside>
         </section>
+
+        <section className="mt-10">
+          <div className="relative overflow-hidden rounded-3xl border border-accent/20 bg-gradient-to-br from-accent/10 via-[#FCF6F5] to-transparent p-6 shadow-sm shadow-black/5">
+            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-accent/10 blur-2xl" />
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="space-y-2">
+                <a
+                  href="https://x.com/edisonisgrowing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/70 transition hover:text-accent"
+                >
+                  Built by
+                  <span className="inline-flex items-center gap-1.5 text-accent">
+                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    @edisonisgrowing
+                  </span>
+                </a>
+                <h3 className="text-lg font-semibold text-foreground">
+                  Want an app like this for your community?
+                </h3>
+                <p className="text-sm leading-6 text-foreground/70">
+                  I build custom Whop experiences and dashboards. Text me on X and let’s ship yours next.
+                </p>
+              </div>
+              <a
+                href="https://x.com/edisonisgrowing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition hover:bg-accent"
+              >
+                Text me on X
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
 
       <Modal
