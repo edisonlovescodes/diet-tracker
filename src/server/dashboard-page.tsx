@@ -469,33 +469,33 @@ function GuestLanding({ experienceId }: { experienceId?: string }) {
     <main className="flex min-h-screen items-center justify-center bg-background px-6">
       <div className="max-w-lg space-y-6 rounded-3xl border border-black/5 bg-white p-10 text-center shadow-sm shadow-black/5">
         <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
-          Macro Tracker for Whop
-          {experienceId ? (
-            <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] text-accent">
-              #{experienceId}
-            </span>
-          ) : null}
+          Whop Macro Tracker
         </span>
         <h1 className="text-3xl font-semibold text-foreground">
-          Open inside your Whop experience
+          Sign in through Whop to start tracking
         </h1>
         <p className="text-sm leading-6 text-foreground/70">
-          This dashboard pulls your members, meals, and weigh-ins using Whop’s
-          secure session token. Launch the app from your Whop creator account
-          (or test via the Whop dev proxy) to start logging macros.
+          Launch this tracker from your Whop account so we can keep your meals
+          and weigh-ins tied to your membership. Open the app from your
+          community’s Apps tab and your data will sync instantly.
         </p>
         <div className="space-y-2 rounded-2xl border border-dashed border-foreground/20 bg-muted/40 p-4 text-left text-xs text-foreground/60">
-          <p className="font-semibold text-foreground/70">Quick steps:</p>
-          <ol className="space-y-1 list-decimal pl-4">
-            <li>Enable the Whop dev proxy and open the app.</li>
-            <li>Log a weigh-in or meal to see live data.</li>
-            <li>Invite members once you’re ready for beta.</li>
+          <p className="font-semibold text-foreground/70">How to get in:</p>
+          <ol className="list-decimal space-y-1 pl-4">
+            <li>Sign in at <span className="font-semibold">whop.com</span>.</li>
+            <li>Open Macro Tracker from your community&apos;s Apps tab.</li>
+            <li>Log your first meal or weigh-in to see live stats.</li>
           </ol>
         </div>
         <p className="text-xs text-foreground/50">
-          Need help? Drop the app into your Whop experience and ping us to wire
-          up the rest of the flows.
+          Need access? Ask your community host to grant the app to your
+          membership. Creators can test privately with Whop&apos;s dev proxy.
         </p>
+        {experienceId ? (
+          <p className="text-[11px] text-foreground/40">
+            Connected community ID: <span className="font-mono">{experienceId}</span>
+          </p>
+        ) : null}
       </div>
     </main>
   );
@@ -506,12 +506,7 @@ function DashboardUnavailable({ experienceId }: { experienceId?: string }) {
     <main className="flex min-h-screen items-center justify-center bg-background px-6">
       <div className="max-w-lg space-y-6 rounded-3xl border border-black/5 bg-white p-10 text-center shadow-sm shadow-black/5">
         <span className="inline-flex items-center gap-2 rounded-full bg-destructive/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-destructive">
-          Macro Tracker
-          {experienceId ? (
-            <span className="rounded-full bg-destructive/20 px-2 py-0.5 text-[10px] text-destructive">
-              #{experienceId}
-            </span>
-          ) : null}
+          Whop Macro Tracker
         </span>
         <h1 className="text-3xl font-semibold text-foreground">
           We can&apos;t load your dashboard right now
@@ -524,6 +519,11 @@ function DashboardUnavailable({ experienceId }: { experienceId?: string }) {
           If the issue persists, reach out to support and mention the launch
           digest shown in your Whop review.
         </p>
+        {experienceId ? (
+          <p className="text-[11px] text-foreground/40">
+            Reference community ID: <span className="font-mono">{experienceId}</span>
+          </p>
+        ) : null}
       </div>
     </main>
   );

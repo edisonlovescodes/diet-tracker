@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Macro Tracker for Whop",
+  title: "Whop Macro Tracker",
   description:
-    "Minimal RP-inspired macro tracking app for Whop creators and members.",
+    "Nutrition logging for any Whop community—track meals, macros, and weigh-ins securely.",
 };
 
 export default function RootLayout({
