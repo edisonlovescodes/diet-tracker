@@ -8,7 +8,7 @@ import type {
   EditableMealFood,
   WeightHistoryEntry,
 } from "@/types/nutrition";
-import { prisma } from "@/lib/prisma";
+import { prisma, PrismaConfigurationError } from "@/lib/prisma";
 import { getOptionalSession } from "@/lib/session";
 
 export type DashboardPageProps = {
@@ -35,126 +35,152 @@ export async function DashboardPage({
   const weekRange = getWeekRange(selectedDate);
   const streakRangeStart = addDays(dayRange.start, -30);
 
-  const [
-    dayMeals,
-    weekMeals,
-    recentMealDays,
-    weightLogs,
-    customFoods,
-  ] = await Promise.all([
-    prisma.meal.findMany({
-      where: {
-        userId: session.user.id,
-        loggedAt: {
-          gte: dayRange.start,
-          lt: dayRange.end,
+  try {
+    const [
+      dayMeals,
+      weekMeals,
+      recentMealDays,
+      weightLogs,
+      customFoods,
+    ] = await Promise.all([
+      prisma.meal.findMany({
+        where: {
+          userId: session.user.id,
+          loggedAt: {
+            gte: dayRange.start,
+            lt: dayRange.end,
+          },
         },
-      },
-      include: { foods: true },
-      orderBy: { loggedAt: "asc" },
-    }),
-    prisma.meal.findMany({
-      where: {
-        userId: session.user.id,
-        loggedAt: {
-          gte: weekRange.start,
-          lt: weekRange.end,
+        include: { foods: true },
+        orderBy: { loggedAt: "asc" },
+      }),
+      prisma.meal.findMany({
+        where: {
+          userId: session.user.id,
+          loggedAt: {
+            gte: weekRange.start,
+            lt: weekRange.end,
+          },
         },
-      },
-      include: { foods: true },
-    }),
-    prisma.meal.findMany({
-      where: {
-        userId: session.user.id,
-        loggedAt: {
-          gte: streakRangeStart,
-          lt: dayRange.end,
+        include: { foods: true },
+      }),
+      prisma.meal.findMany({
+        where: {
+          userId: session.user.id,
+          loggedAt: {
+            gte: streakRangeStart,
+            lt: dayRange.end,
+          },
         },
+        select: { loggedAt: true },
+      }),
+      prisma.weightLog.findMany({
+        where: { userId: session.user.id },
+        orderBy: { recordedFor: "asc" },
+      }),
+      prisma.customFood.findMany({
+        where: { userId: session.user.id },
+        orderBy: { updatedAt: "desc" },
+      }),
+    ]);
+
+    const meals = dayMeals.map((meal) => mapMealToDisplay(meal));
+    const editableMeals = dayMeals.map((meal) => mapMealToEditable(meal));
+
+    const macroConsumed = meals.reduce(
+      (acc, meal) => {
+        acc.protein += meal.protein;
+        acc.carbs += meal.carbs;
+        acc.fats += meal.fats;
+        return acc;
       },
-      select: { loggedAt: true },
-    }),
-    prisma.weightLog.findMany({
-      where: { userId: session.user.id },
-      orderBy: { recordedFor: "asc" },
-    }),
-    prisma.customFood.findMany({
-      where: { userId: session.user.id },
-      orderBy: { updatedAt: "desc" },
-    }),
-  ]);
+      { protein: 0, carbs: 0, fats: 0 },
+    );
 
-  const meals = dayMeals.map((meal) => mapMealToDisplay(meal));
-  const editableMeals = dayMeals.map((meal) => mapMealToEditable(meal));
+    const weekMealsByDate = aggregateMealsByDate(weekMeals);
+    const weekDays = buildWeekDays(
+      weekRange.start,
+      weekMealsByDate,
+      selectedDate,
+      session.macroTarget,
+    );
 
-  const macroConsumed = meals.reduce(
-    (acc, meal) => {
-      acc.protein += meal.protein;
-      acc.carbs += meal.carbs;
-      acc.fats += meal.fats;
-      return acc;
-    },
-    { protein: 0, carbs: 0, fats: 0 },
-  );
+    const weightSeries = buildWeightSeries(weightLogs);
+    const latestWeight = weightLogs.at(-1) ?? null;
+    const weeklyChange = calculateWeeklyChange(weightLogs);
+    const complianceScore = calculateCompliance(
+      macroConsumed,
+      session.macroTarget,
+    );
+    const streakDays = calculateStreakDays(recentMealDays, dayRange.start);
 
-  const weekMealsByDate = aggregateMealsByDate(weekMeals);
-  const weekDays = buildWeekDays(weekRange.start, weekMealsByDate, selectedDate, session.macroTarget);
+    const customFoodsFormatted: EditableCustomFood[] = customFoods.map(
+      (food) => ({
+        id: food.id,
+        name: food.name,
+        brand: food.brand,
+        servingSize: food.servingSize,
+        servingUnit: food.servingUnit,
+        proteinPerUnit: food.proteinPerUnit,
+        carbsPerUnit: food.carbsPerUnit,
+        fatsPerUnit: food.fatsPerUnit,
+        caloriesPerUnit: food.caloriesPerUnit ?? undefined,
+      }),
+    );
 
-  const weightSeries = buildWeightSeries(weightLogs);
-  const latestWeight = weightLogs.at(-1) ?? null;
-  const weeklyChange = calculateWeeklyChange(weightLogs);
-  const complianceScore = calculateCompliance(macroConsumed, session.macroTarget);
-  const streakDays = calculateStreakDays(recentMealDays, dayRange.start);
+    const weightHistory: WeightHistoryEntry[] = weightLogs.map((log) => ({
+      id: log.id,
+      weightLbs: log.weightLbs,
+      recordedFor: log.recordedFor.toISOString(),
+      note: log.note,
+    }));
 
-  const customFoodsFormatted: EditableCustomFood[] = customFoods.map((food) => ({
-    id: food.id,
-    name: food.name,
-    brand: food.brand,
-    servingSize: food.servingSize,
-    servingUnit: food.servingUnit,
-    proteinPerUnit: food.proteinPerUnit,
-    carbsPerUnit: food.carbsPerUnit,
-    fatsPerUnit: food.fatsPerUnit,
-    caloriesPerUnit: food.caloriesPerUnit ?? undefined,
-  }));
+    return (
+      <main className="min-h-screen bg-background">
+        <DashboardClient
+          session={session}
+          experienceId={experienceId}
+          weekNumber={getWeekNumber(selectedDate)}
+          weekDays={weekDays}
+          macroTargets={{
+            protein: session.macroTarget?.protein ?? 0,
+            carbs: session.macroTarget?.carbs ?? 0,
+            fats: session.macroTarget?.fats ?? 0,
+          }}
+          macroConsumed={macroConsumed}
+          meals={meals}
+          editableMeals={editableMeals}
+          weightSeries={weightSeries}
+          weightLogs={weightHistory}
+          selectedDateISO={dayRange.start.toISOString()}
+          latestWeight={
+            latestWeight
+              ? {
+                  id: latestWeight.id,
+                  weightLbs: latestWeight.weightLbs,
+                  recordedFor: latestWeight.recordedFor.toISOString(),
+                  note: latestWeight.note,
+                }
+              : null
+          }
+          weeklyChange={weeklyChange}
+          complianceScore={complianceScore}
+          streakDays={streakDays}
+          customFoods={customFoodsFormatted}
+        />
+      </main>
+    );
+  } catch (error) {
+    if (error instanceof PrismaConfigurationError) {
+      console.warn(
+        "[dashboard] Prisma configuration missing; falling back to guest landing.",
+      );
+      return <GuestLanding experienceId={experienceId} />;
+    }
 
-  const weightHistory: WeightHistoryEntry[] = weightLogs.map((log) => ({
-    id: log.id,
-    weightLbs: log.weightLbs,
-    recordedFor: log.recordedFor.toISOString(),
-    note: log.note,
-  }));
-
-  return (
-    <main className="min-h-screen bg-background">
-      <DashboardClient
-        session={session}
-        experienceId={experienceId}
-        weekNumber={getWeekNumber(selectedDate)}
-        weekDays={weekDays}
-        macroTargets={{
-          protein: session.macroTarget?.protein ?? 0,
-          carbs: session.macroTarget?.carbs ?? 0,
-          fats: session.macroTarget?.fats ?? 0,
-        }}
-        macroConsumed={macroConsumed}
-        meals={meals}
-        editableMeals={editableMeals}
-        weightSeries={weightSeries}
-        weightLogs={weightHistory}
-        selectedDateISO={dayRange.start.toISOString()}
-        latestWeight={latestWeight ? {
-          id: latestWeight.id,
-          weightLbs: latestWeight.weightLbs,
-          recordedFor: latestWeight.recordedFor.toISOString(),
-          note: latestWeight.note,
-        } : null}
-        weeklyChange={weeklyChange}
-        complianceScore={complianceScore}
-        streakDays={streakDays}
-        customFoods={customFoodsFormatted}
-      />
-    </main>
-  );
+    console.error("[dashboard] Failed to load user data", error);
+    return <DashboardUnavailable experienceId={experienceId} />;
+  }
 }
 
 function parseSelectedDate(value?: string) {
@@ -460,6 +486,34 @@ function GuestLanding({ experienceId }: { experienceId?: string }) {
         <p className="text-xs text-foreground/50">
           Need help? Drop the app into your Whop experience and ping us to wire
           up the rest of the flows.
+        </p>
+      </div>
+    </main>
+  );
+}
+
+function DashboardUnavailable({ experienceId }: { experienceId?: string }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-6">
+      <div className="max-w-lg space-y-6 rounded-3xl border border-black/5 bg-white p-10 text-center shadow-sm shadow-black/5">
+        <span className="inline-flex items-center gap-2 rounded-full bg-destructive/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-destructive">
+          Macro Tracker
+          {experienceId ? (
+            <span className="rounded-full bg-destructive/20 px-2 py-0.5 text-[10px] text-destructive">
+              #{experienceId}
+            </span>
+          ) : null}
+        </span>
+        <h1 className="text-3xl font-semibold text-foreground">
+          We can&apos;t load your dashboard right now
+        </h1>
+        <p className="text-sm leading-6 text-foreground/70">
+          Our servers returned an unexpected error while fetching your meals and
+          weigh-ins. Please refresh in a moment, or reopen the app from Whop.
+        </p>
+        <p className="text-xs text-foreground/50">
+          If the issue persists, reach out to support and mention the launch
+          digest shown in your Whop review.
         </p>
       </div>
     </main>
