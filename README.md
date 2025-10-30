@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Macro Tracker for Whop
 
-## Getting Started
+Creator-facing nutrition tracker designed to run inside a Whop experience. It authenticates members through Whop’s secure iframe headers, stores meals/weigh-ins in MongoDB (Prisma), and surfaces daily/weekly macro insights.
 
-First, run the development server:
+### Requirements
+- Node 20+
+- pnpm
+- Whop creator account with an app configured
+- MongoDB connection string
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Environment
+Copy `.env.example` to `.env.local` (and `.env` for production). Required keys:
+
+```
+WHOP_API_KEY=...
+WHOP_APP_ID=...
+NEXT_PUBLIC_WHOP_APP_ID=...
+NEXT_PUBLIC_WHOP_AGENT_USER_ID=...
+DATABASE_URL=...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`WHOP_APP_ID` is used server-side; keep `NEXT_PUBLIC_WHOP_APP_ID` for client references or existing embeds.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Development
+Run the app through the Whop dev proxy so iframe headers are injected automatically:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm install
+pnpm exec whop-proxy --command "pnpm dev"
+```
 
-## Learn More
+In the Whop dashboard, enable the dev proxy and point the experience to `http://localhost:3000`. All session-required routes (e.g., `/experiences/[experienceId]`) will now authenticate properly.
 
-To learn more about Next.js, take a look at the following resources:
+### Running inside Whop
+1. Deploy the built app (Vercel works well).
+2. Add the deployment URL to your Whop experience.
+3. Set the production environment variables (`WHOP_API_KEY`, `WHOP_APP_ID`, `DATABASE_URL`, etc.) in your host.
+4. Members opening the experience will see their personalized dashboard once Whop forwards the `X-Whop-User-Token`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Database & Prisma
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm prisma generate
+pnpm prisma db push
+```
 
-## Deploy on Vercel
+Seeds/live data live in MongoDB. Running the dashboard without a database connection falls back to the guest landing view.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Useful Commands
+- `pnpm dev` – Next.js dev server (without proxy)
+- `pnpm build` / `pnpm start` – Production build & serve
+- `pnpm lint` – ESLint
+- `pnpm db:push` – Sync schema
+- `pnpm db:seed` – Seed demo data
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Support
+Need help wiring to other Whop flows or automations? Ping the Whop developer team via your creator dashboard.

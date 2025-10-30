@@ -9,13 +9,17 @@ export class WhopConfigurationError extends Error {
 
 let cachedClient: InstanceType<typeof Whop> | null = null;
 
+function resolveAppId() {
+  return process.env.WHOP_APP_ID ?? process.env.NEXT_PUBLIC_WHOP_APP_ID ?? null;
+}
+
 export function getWhopClient() {
   if (cachedClient) {
     return cachedClient;
   }
 
   const apiKey = process.env.WHOP_API_KEY;
-  const appId = process.env.NEXT_PUBLIC_WHOP_APP_ID;
+  const appId = resolveAppId();
 
   if (!apiKey) {
     throw new WhopConfigurationError(
@@ -25,7 +29,7 @@ export function getWhopClient() {
 
   if (!appId) {
     throw new WhopConfigurationError(
-      "Missing NEXT_PUBLIC_WHOP_APP_ID environment variable.",
+      "Missing WHOP_APP_ID (or NEXT_PUBLIC_WHOP_APP_ID) environment variable.",
     );
   }
 

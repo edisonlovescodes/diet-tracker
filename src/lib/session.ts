@@ -67,7 +67,8 @@ async function requireSessionFromHeaders(
 
   try {
     validation = await client.verifyUserToken(token, {
-      appId: process.env.NEXT_PUBLIC_WHOP_APP_ID,
+      appId:
+        process.env.WHOP_APP_ID ?? process.env.NEXT_PUBLIC_WHOP_APP_ID ?? undefined,
     });
   } catch (error) {
     console.warn("[session] Failed to verify Whop token", error);
