@@ -24,11 +24,17 @@ export async function DashboardPage({
   experienceId,
   searchParamsPromise,
 }: DashboardPageProps) {
-  const session = await getOptionalSession();
+  const session = await getOptionalSession({ experienceId });
   if (!session) {
     return <GuestLanding experienceId={experienceId} />;
   }
   const params = searchParamsPromise ? await searchParamsPromise : undefined;
+
+  const resolvedExperienceId = session.experienceId ?? experienceId ?? null;
+  const experienceFilter =
+    resolvedExperienceId === null
+      ? { experienceId: null }
+      : { experienceId: resolvedExperienceId };
 
   const selectedDate = parseSelectedDate(params?.date);
   const dayRange = getDayRange(selectedDate);
@@ -44,45 +50,48 @@ export async function DashboardPage({
       customFoods,
     ] = await Promise.all([
       prisma.meal.findMany({
-        where: {
-          userId: session.user.id,
-          loggedAt: {
-            gte: dayRange.start,
-            lt: dayRange.end,
-          },
+      where: {
+        userId: session.user.id,
+        ...experienceFilter,
+        loggedAt: {
+          gte: dayRange.start,
+          lt: dayRange.end,
+        },
         },
         include: { foods: true },
         orderBy: { loggedAt: "asc" },
       }),
       prisma.meal.findMany({
-        where: {
-          userId: session.user.id,
-          loggedAt: {
-            gte: weekRange.start,
-            lt: weekRange.end,
-          },
+      where: {
+        userId: session.user.id,
+        ...experienceFilter,
+        loggedAt: {
+          gte: weekRange.start,
+          lt: weekRange.end,
+        },
         },
         include: { foods: true },
       }),
       prisma.meal.findMany({
-        where: {
-          userId: session.user.id,
-          loggedAt: {
-            gte: streakRangeStart,
-            lt: dayRange.end,
-          },
+      where: {
+        userId: session.user.id,
+        ...experienceFilter,
+        loggedAt: {
+          gte: streakRangeStart,
+          lt: dayRange.end,
+        },
         },
         select: { loggedAt: true },
       }),
-      prisma.weightLog.findMany({
-        where: { userId: session.user.id },
-        orderBy: { recordedFor: "asc" },
-      }),
-      prisma.customFood.findMany({
-        where: { userId: session.user.id },
-        orderBy: { updatedAt: "desc" },
-      }),
-    ]);
+    prisma.weightLog.findMany({
+      where: { userId: session.user.id, ...experienceFilter },
+      orderBy: { recordedFor: "asc" },
+    }),
+    prisma.customFood.findMany({
+      where: { userId: session.user.id, ...experienceFilter },
+      orderBy: { updatedAt: "desc" },
+    }),
+  ]);
 
     const meals = dayMeals.map((meal) => mapMealToDisplay(meal));
     const editableMeals = dayMeals.map((meal) => mapMealToEditable(meal));
@@ -137,10 +146,10 @@ export async function DashboardPage({
 
     return (
       <main className="min-h-screen bg-background">
-        <DashboardClient
-          session={session}
-          experienceId={experienceId}
-          weekNumber={getWeekNumber(selectedDate)}
+      <DashboardClient
+        session={session}
+        experienceId={resolvedExperienceId ?? undefined}
+        weekNumber={getWeekNumber(selectedDate)}
           weekDays={weekDays}
           macroTargets={{
             protein: session.macroTarget?.protein ?? 0,

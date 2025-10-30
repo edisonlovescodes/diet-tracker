@@ -10,9 +10,15 @@ import { customFoodSchema } from "@/app/api/custom-foods/schemas";
 export async function GET(request: NextRequest) {
   try {
     const session = await requireSessionFromRequest(request);
+    const experienceWhere =
+      session.experienceId === null
+        ? { experienceId: null }
+        : session.experienceId
+          ? { experienceId: session.experienceId }
+          : {};
 
     const foods = await prisma.customFood.findMany({
-      where: { userId: session.user.id },
+      where: { userId: session.user.id, ...experienceWhere },
       orderBy: { updatedAt: "desc" },
     });
 
@@ -30,6 +36,7 @@ export async function POST(request: NextRequest) {
     const food = await prisma.customFood.create({
       data: {
         userId: session.user.id,
+        experienceId: session.experienceId ?? null,
         name: payload.name,
         brand: payload.brand,
         servingSize: payload.servingSize,

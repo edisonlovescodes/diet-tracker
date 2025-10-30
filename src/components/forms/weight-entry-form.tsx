@@ -14,11 +14,13 @@ type WeightEntryFormProps = {
     | null;
   defaultDate: string;
   onClose: () => void;
+  experienceId?: string | null;
 };
 
 export function WeightEntryForm({
   initial,
   defaultDate,
+  experienceId,
   onClose,
 }: WeightEntryFormProps) {
   const router = useRouter();
@@ -54,7 +56,12 @@ export function WeightEntryForm({
         initial ? `/api/weights/${initial.id}` : "/api/weights",
         {
           method: initial ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(experienceId
+              ? { "X-Whop-Experience-Id": experienceId }
+              : {}),
+          },
           body: JSON.stringify(payload),
         },
       );
@@ -78,6 +85,11 @@ export function WeightEntryForm({
     startTransition(async () => {
       const response = await fetch(`/api/weights/${initial.id}`, {
         method: "DELETE",
+        headers: {
+          ...(experienceId
+            ? { "X-Whop-Experience-Id": experienceId }
+            : {}),
+        },
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);

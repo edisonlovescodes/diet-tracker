@@ -8,6 +8,7 @@ type MealFormProps = {
   initial?: EditableMeal | null;
   defaultDate: string;
   onClose: () => void;
+  experienceId?: string | null;
 };
 
 type FoodOption = {
@@ -66,7 +67,12 @@ const QUICK_ADD_FIELDS = [
 
 type MealItem = EditableMealFood & { key: string };
 
-export function MealForm({ initial, defaultDate, onClose }: MealFormProps) {
+export function MealForm({
+  initial,
+  defaultDate,
+  onClose,
+  experienceId,
+}: MealFormProps) {
   const router = useRouter();
   const [name, setName] = useState(initial?.name ?? "");
   const [loggedAt, setLoggedAt] = useState(
@@ -144,7 +150,12 @@ export function MealForm({ initial, defaultDate, onClose }: MealFormProps) {
         initial?.id ? `/api/meals/${initial.id}` : "/api/meals",
         {
           method: initial?.id ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(experienceId
+              ? { "X-Whop-Experience-Id": experienceId }
+              : {}),
+          },
           body: JSON.stringify(payload),
         },
       );
@@ -269,6 +280,11 @@ export function MealForm({ initial, defaultDate, onClose }: MealFormProps) {
     startTransition(async () => {
       const response = await fetch(`/api/meals/${initial.id}`, {
         method: "DELETE",
+        headers: {
+          ...(experienceId
+            ? { "X-Whop-Experience-Id": experienceId }
+            : {}),
+        },
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
@@ -297,6 +313,9 @@ export function MealForm({ initial, defaultDate, onClose }: MealFormProps) {
       });
       const response = await fetch(`/api/foods?${params.toString()}`, {
         cache: "no-store",
+        headers: experienceId
+          ? { "X-Whop-Experience-Id": experienceId }
+          : {},
       });
       if (!response.ok) {
         throw new Error("Request failed");

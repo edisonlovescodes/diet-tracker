@@ -43,6 +43,7 @@ model MacroTarget {
 model WeightLog {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   userId      String
+  experienceId String?
   recordedFor DateTime @default(now())
   weightLbs   Float
   note        String?
@@ -50,12 +51,14 @@ model WeightLog {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, experienceId])
   @@index([userId, recordedFor])
 }
 
 model Meal {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   userId    String
+  experienceId String?
   name      String
   loggedAt  DateTime   @default(now())
   protein   Float      @default(0)
@@ -67,6 +70,7 @@ model Meal {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, experienceId])
   @@index([userId, loggedAt])
 }
 
@@ -116,6 +120,7 @@ model Food {
 model CustomFood {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   userId          String
+  experienceId    String?
   name            String
   brand           String?
   servingSize     Float
@@ -129,6 +134,8 @@ model CustomFood {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   mealFoods MealFood[]
+
+  @@index([userId, experienceId])
 }
 
 enum FoodSource {

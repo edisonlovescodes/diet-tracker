@@ -13,6 +13,7 @@ type SessionUser = {
 export type Session = {
   user: SessionUser;
   macroTarget: MacroTarget;
+  experienceId: string | null;
 };
 
 const DEFAULT_MACROS = {
@@ -29,19 +30,27 @@ export class UnauthorizedError extends Error {
   }
 }
 
-export async function requireSession() {
+type SessionOptions = {
+  experienceId?: string | null;
+};
+
+export async function requireSession(options?: SessionOptions) {
   const headerList = await headers();
-  return requireSessionFromHeaders(headerList);
+  return requireSessionFromHeaders(headerList, options);
 }
 
-export async function requireSessionFromRequest(request: NextRequest) {
-  return requireSessionFromHeaders(request.headers);
+export async function requireSessionFromRequest(
+  request: NextRequest,
+  options?: SessionOptions,
+) {
+  return requireSessionFromHeaders(request.headers, options);
 }
 
 type HeaderBag = Pick<Headers, "get">;
 
 async function requireSessionFromHeaders(
   incomingHeaders: HeaderBag,
+  options?: SessionOptions,
 ): Promise<Session> {
   const token =
     incomingHeaders.get("x-whop-user-token") ??
@@ -69,6 +78,12 @@ async function requireSessionFromHeaders(
     throw new UnauthorizedError("Invalid Whop user token.");
   }
 
+  const experienceId =
+    incomingHeaders.get("x-whop-experience-id") ??
+    incomingHeaders.get("X-Whop-Experience-Id") ??
+    options?.experienceId ??
+    null;
+
   const user = await ensureUser(validation.userId);
 
   if (!user.macroTarget) {
@@ -85,18 +100,20 @@ async function requireSessionFromHeaders(
     return {
       user: toSessionUser(user),
       macroTarget,
+      experienceId,
     };
   }
 
   return {
     user: toSessionUser(user),
     macroTarget: user.macroTarget,
+    experienceId,
   };
 }
 
-export async function getOptionalSession() {
+export async function getOptionalSession(options?: SessionOptions) {
   try {
-    return await requireSession();
+    return await requireSession(options);
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return null;

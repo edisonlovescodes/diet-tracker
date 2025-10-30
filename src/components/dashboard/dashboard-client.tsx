@@ -92,11 +92,27 @@ export function DashboardClient(props: DashboardClientProps) {
     food?: EditableCustomFood | null;
   }>({ open: false });
   const [customFoods, setCustomFoods] = useState(initialCustomFoods);
+  const activeExperienceId = session.experienceId ?? experienceId ?? null;
+  const sessionWithExperience = useMemo(
+    () => ({ ...session, experienceId: activeExperienceId }),
+    [session, activeExperienceId],
+  );
 
   const editableMealMap = useMemo(() => {
     return new Map(editableMeals.map((meal) => [meal.id, meal]));
   }, [editableMeals]);
 
+  function withExperienceHeader(
+    headers: Record<string, string> = {},
+  ): Record<string, string> {
+    if (!activeExperienceId) {
+      return headers;
+    }
+    return {
+      ...headers,
+      "X-Whop-Experience-Id": activeExperienceId,
+    };
+  }
   function handleSelectDay(isoDate: string) {
     const params = new URLSearchParams(searchParams?.toString() ?? "");
     params.set("date", isoDate.split("T")[0]);
@@ -124,6 +140,7 @@ export function DashboardClient(props: DashboardClientProps) {
     startTransition(async () => {
       const response = await fetch(`/api/meals/${mealId}`, {
         method: "DELETE",
+        headers: withExperienceHeader(),
       });
       if (!response.ok) {
         console.error("Failed to delete meal", await response.text());
@@ -160,7 +177,7 @@ export function DashboardClient(props: DashboardClientProps) {
   ];
 
   return (
-    <SessionProvider value={session}>
+    <SessionProvider value={sessionWithExperience}>
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-16 pt-10 md:px-6 lg:px-10">
         <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
@@ -416,6 +433,7 @@ export function DashboardClient(props: DashboardClientProps) {
         <WeightEntryForm
           initial={weightModal.entry ?? undefined}
           defaultDate={selectedDateISO}
+          experienceId={activeExperienceId}
           onClose={() => setWeightModal({ open: false })}
         />
       </Modal>
@@ -430,6 +448,7 @@ export function DashboardClient(props: DashboardClientProps) {
           <MealForm
             initial={mealModal.meal}
             defaultDate={selectedDateISO}
+            experienceId={activeExperienceId}
             onClose={() => setMealModal({ open: false })}
           />
         ) : null}
@@ -444,6 +463,7 @@ export function DashboardClient(props: DashboardClientProps) {
           initial={customFoodModal.food ?? undefined}
           onClose={() => setCustomFoodModal({ open: false })}
           onSuccess={handleCustomFoodSaved}
+          experienceId={activeExperienceId}
         />
       </Modal>
     </SessionProvider>

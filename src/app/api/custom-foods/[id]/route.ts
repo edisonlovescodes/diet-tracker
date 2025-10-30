@@ -22,7 +22,10 @@ export async function PATCH(
       where: { id },
     });
 
-    if (!existing || existing.userId !== session.user.id) {
+    const experienceMatch =
+      (existing?.experienceId ?? null) === (session.experienceId ?? null);
+
+    if (!existing || existing.userId !== session.user.id || !experienceMatch) {
       return NextResponse.json({ error: "Food not found." }, { status: 404 });
     }
 
@@ -58,7 +61,10 @@ export async function DELETE(
       where: { id },
     });
 
-    if (!existing || existing.userId !== session.user.id) {
+    const experienceMatch =
+      (existing?.experienceId ?? null) === (session.experienceId ?? null);
+
+    if (!existing || existing.userId !== session.user.id || !experienceMatch) {
       return NextResponse.json({ error: "Food not found." }, { status: 404 });
     }
 

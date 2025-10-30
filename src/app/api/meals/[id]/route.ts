@@ -22,7 +22,10 @@ export async function GET(
       include: { foods: true },
     });
 
-    if (!meal || meal.userId !== session.user.id) {
+    const experienceMatch =
+      (meal?.experienceId ?? null) === (session.experienceId ?? null);
+
+    if (!meal || meal.userId !== session.user.id || !experienceMatch) {
       return NextResponse.json({ error: "Meal not found." }, { status: 404 });
     }
 
@@ -46,7 +49,10 @@ export async function PATCH(
       include: { foods: true },
     });
 
-    if (!existing || existing.userId !== session.user.id) {
+    const experienceMatch =
+      (existing?.experienceId ?? null) === (session.experienceId ?? null);
+
+    if (!existing || existing.userId !== session.user.id || !experienceMatch) {
       return NextResponse.json({ error: "Meal not found." }, { status: 404 });
     }
 
@@ -67,6 +73,7 @@ export async function PATCH(
       const prepared = await buildMealFoodInputs({
         foods: payload.foods,
         userId: session.user.id,
+        experienceId: session.experienceId ?? null,
       });
 
       foodUpdate = {
@@ -111,7 +118,10 @@ export async function DELETE(
       where: { id },
     });
 
-    if (!existing || existing.userId !== session.user.id) {
+    const experienceMatch =
+      (existing?.experienceId ?? null) === (session.experienceId ?? null);
+
+    if (!existing || existing.userId !== session.user.id || !experienceMatch) {
       return NextResponse.json({ error: "Meal not found." }, { status: 404 });
     }
 

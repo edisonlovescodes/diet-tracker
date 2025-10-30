@@ -11,6 +11,12 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const query = url.searchParams.get("q") ?? "";
     const limit = Number(url.searchParams.get("limit") ?? "15");
+    const experienceWhere =
+      session.experienceId === null
+        ? { experienceId: null }
+        : session.experienceId
+          ? { experienceId: session.experienceId }
+          : {};
 
     const catalogFoodsPromise = prisma.food.findMany({
       where: query
@@ -28,6 +34,7 @@ export async function GET(request: NextRequest) {
     const customFoodsPromise = prisma.customFood.findMany({
       where: {
         userId: session.user.id,
+        ...experienceWhere,
         ...(query
           ? {
               OR: [

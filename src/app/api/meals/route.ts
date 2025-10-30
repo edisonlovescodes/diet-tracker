@@ -18,10 +18,17 @@ export async function GET(request: NextRequest) {
     const selectedDate = dateParam ? new Date(dateParam) : new Date();
 
     const { start, end } = getDayRange(selectedDate);
+    const experienceWhere =
+      session.experienceId === null
+        ? { experienceId: null }
+        : session.experienceId
+          ? { experienceId: session.experienceId }
+          : {};
 
     const meals = await prisma.meal.findMany({
       where: {
         userId: session.user.id,
+        ...experienceWhere,
         loggedAt: {
           gte: start,
           lt: end,
@@ -49,11 +56,13 @@ export async function POST(request: NextRequest) {
     const foods = await buildMealFoodInputs({
       foods: payload.foods,
       userId: session.user.id,
+       experienceId: session.experienceId ?? null,
     });
 
     const meal = await prisma.meal.create({
       data: {
         userId: session.user.id,
+        experienceId: session.experienceId ?? null,
         name: payload.name,
         loggedAt: payload.loggedAt,
         notes: payload.notes,

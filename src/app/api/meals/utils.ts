@@ -65,15 +65,17 @@ export type MealFoodCreateInput = {
 export async function buildMealFoodInputs({
   foods,
   userId,
+  experienceId,
 }: {
   foods: z.infer<typeof foodInputSchema>[];
   userId: string;
+  experienceId: string | null;
 }) {
   const items: MealFoodCreateInput[] = [];
   const total = { protein: 0, carbs: 0, fats: 0 };
 
   for (const item of foods) {
-    const base = await hydrateFood(item, userId);
+    const base = await hydrateFood(item, userId, experienceId);
 
     items.push({
       foodId: base.foodId,
@@ -100,6 +102,7 @@ export async function buildMealFoodInputs({
 async function hydrateFood(
   item: z.infer<typeof foodInputSchema>,
   userId: string,
+  experienceId: string | null,
 ) {
   const quantity = item.quantity;
 
@@ -134,7 +137,13 @@ async function hydrateFood(
       where: { id: item.customFoodId },
     });
 
-    if (!custom || custom.userId !== userId) {
+    const customExperience = custom?.experienceId ?? null;
+
+    if (
+      !custom ||
+      custom.userId !== userId ||
+      customExperience !== (experienceId ?? null)
+    ) {
       throw new Error("Custom food not found.");
     }
 

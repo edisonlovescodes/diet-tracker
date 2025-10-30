@@ -22,9 +22,15 @@ export async function GET(request: NextRequest) {
     const session = await requireSessionFromRequest(request);
     const url = new URL(request.url);
     const limit = Number(url.searchParams.get("limit") ?? "30");
+    const experienceWhere =
+      session.experienceId === null
+        ? { experienceId: null }
+        : session.experienceId
+          ? { experienceId: session.experienceId }
+          : {};
 
     const weightLogs = await prisma.weightLog.findMany({
-      where: { userId: session.user.id },
+      where: { userId: session.user.id, ...experienceWhere },
       orderBy: { recordedFor: "desc" },
       take: Number.isFinite(limit) ? Math.max(1, Math.min(limit, 120)) : 30,
     });
@@ -43,6 +49,7 @@ export async function POST(request: NextRequest) {
     const weightLog = await prisma.weightLog.create({
       data: {
         userId: session.user.id,
+        experienceId: session.experienceId ?? null,
         weightLbs: payload.weightLbs,
         recordedFor: payload.recordedFor,
         note: payload.note,

@@ -28,9 +28,15 @@ type CustomFoodFormProps = {
   initial?: EditableCustomFood | null;
   onClose: () => void;
   onSuccess?: (food: EditableCustomFood & { id: string }) => void;
+  experienceId?: string | null;
 };
 
-export function CustomFoodForm({ initial, onClose, onSuccess }: CustomFoodFormProps) {
+export function CustomFoodForm({
+  initial,
+  onClose,
+  onSuccess,
+  experienceId,
+}: CustomFoodFormProps) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>({
     name: initial?.name ?? "",
@@ -81,7 +87,12 @@ export function CustomFoodForm({ initial, onClose, onSuccess }: CustomFoodFormPr
         initial?.id ? `/api/custom-foods/${initial.id}` : "/api/custom-foods",
         {
           method: initial?.id ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(experienceId
+              ? { "X-Whop-Experience-Id": experienceId }
+              : {}),
+          },
           body: JSON.stringify(payload),
         },
       );
@@ -106,6 +117,11 @@ export function CustomFoodForm({ initial, onClose, onSuccess }: CustomFoodFormPr
     startTransition(async () => {
       const response = await fetch(`/api/custom-foods/${initial.id}`, {
         method: "DELETE",
+        headers: {
+          ...(experienceId
+            ? { "X-Whop-Experience-Id": experienceId }
+            : {}),
+        },
       });
       if (!response.ok) {
         const data = await response.json().catch(() => null);
