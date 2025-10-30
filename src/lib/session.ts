@@ -52,9 +52,18 @@ async function requireSessionFromHeaders(
   }
 
   const client = getWhopClient();
-  const validation = await client.verifyUserToken(token, {
-    appId: process.env.NEXT_PUBLIC_WHOP_APP_ID,
-  });
+  let validation: Awaited<
+    ReturnType<typeof client.verifyUserToken>
+  > | null = null;
+
+  try {
+    validation = await client.verifyUserToken(token, {
+      appId: process.env.NEXT_PUBLIC_WHOP_APP_ID,
+    });
+  } catch (error) {
+    console.warn("[session] Failed to verify Whop token", error);
+    throw new UnauthorizedError("Invalid Whop user token.");
+  }
 
   if (!validation?.userId) {
     throw new UnauthorizedError("Invalid Whop user token.");
@@ -130,22 +139,27 @@ async function ensureUser(id: string) {
         ? (profile.username as string | null | undefined)
         : null;
 
-  return prisma.user.create({
-    data: {
-      id,
-      email: profileEmail ?? null,
-      displayName: profileDisplayName ?? null,
-      macroTarget: {
-        create: {
-          calories: DEFAULT_MACROS.calories,
-          protein: DEFAULT_MACROS.protein,
-          carbs: DEFAULT_MACROS.carbs,
-          fats: DEFAULT_MACROS.fats,
+  try {
+    return await prisma.user.create({
+      data: {
+        id,
+        email: profileEmail ?? null,
+        displayName: profileDisplayName ?? null,
+        macroTarget: {
+          create: {
+            calories: DEFAULT_MACROS.calories,
+            protein: DEFAULT_MACROS.protein,
+            carbs: DEFAULT_MACROS.carbs,
+            fats: DEFAULT_MACROS.fats,
+          },
         },
       },
-    },
-    include: { macroTarget: true },
-  });
+      include: { macroTarget: true },
+    });
+  } catch (error) {
+    console.error("[session] Failed to create user record", error);
+    throw new UnauthorizedError("Unable to provision user session.");
+  }
 }
 
 async function fetchWhopProfile(userId: string) {
