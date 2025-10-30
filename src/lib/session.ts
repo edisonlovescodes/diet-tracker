@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import type { MacroTarget, User } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
-import { getWhopClient } from "@/lib/whop";
+import { prisma, PrismaConfigurationError } from "@/lib/prisma";
+import { getWhopClient, WhopConfigurationError } from "@/lib/whop";
 
 type SessionUser = {
   id: string;
@@ -90,6 +90,18 @@ export async function getOptionalSession() {
     return await requireSession();
   } catch (error) {
     if (error instanceof UnauthorizedError) {
+      return null;
+    }
+    if (error instanceof WhopConfigurationError) {
+      console.warn(
+        "[session] Whop configuration is missing; treating request as guest.",
+      );
+      return null;
+    }
+    if (error instanceof PrismaConfigurationError) {
+      console.warn(
+        "[session] Database configuration is missing; treating request as guest.",
+      );
       return null;
     }
     throw error;
