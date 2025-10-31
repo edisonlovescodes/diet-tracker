@@ -1,4 +1,5 @@
 import { DashboardPage } from "@/server/dashboard-page";
+import { headers } from "next/headers";
 
 type PageProps = {
   searchParams?: Promise<{
@@ -6,6 +7,9 @@ type PageProps = {
   }>;
 };
 
-export default function Home({ searchParams }: PageProps) {
-  return <DashboardPage searchParamsPromise={searchParams} />;
+export default async function Home({ searchParams }: PageProps) {
+  const headersList = await headers();
+  const experienceId = headersList.get("x-whop-experience-id");
+
+  return <DashboardPage experienceId={experienceId ?? undefined} searchParamsPromise={searchParams} />;
 }
