@@ -17,7 +17,7 @@ datasource db {
 
 model User {
   id          String        @id @map("_id")
-  email       String?       @unique
+  email       String?
   displayName String?
   macroTarget MacroTarget?
   meals       Meal[]
