@@ -491,11 +491,6 @@ function GuestLanding({ experienceId }: { experienceId?: string }) {
           Need access? Ask your community host to grant the app to your
           membership. Creators can test privately with Whop&apos;s dev proxy.
         </p>
-        {experienceId ? (
-          <p className="text-[11px] text-foreground/40">
-            Connected community ID: <span className="font-mono">{experienceId}</span>
-          </p>
-        ) : null}
       </div>
     </main>
   );
@@ -519,11 +514,6 @@ function DashboardUnavailable({ experienceId }: { experienceId?: string }) {
           If the issue persists, reach out to support and mention the launch
           digest shown in your Whop review.
         </p>
-        {experienceId ? (
-          <p className="text-[11px] text-foreground/40">
-            Reference community ID: <span className="font-mono">{experienceId}</span>
-          </p>
-        ) : null}
       </div>
     </main>
   );
