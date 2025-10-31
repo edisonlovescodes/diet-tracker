@@ -22,12 +22,23 @@ type WeightTrendChartProps = {
 };
 
 export function WeightTrendChart({ data }: WeightTrendChartProps) {
+  const palette = {
+    weight: "var(--color-foreground)",
+    trend: "color-mix(in oklab, var(--color-foreground) 60%, transparent)",
+    goal: "var(--color-accent)",
+    grid: "color-mix(in oklab, var(--color-foreground) 12%, transparent)",
+    tooltipBackground: "var(--color-panel, var(--color-background))",
+    tooltipBorder: "color-mix(in oklab, var(--color-foreground) 16%, transparent)",
+    tooltipText: "var(--color-foreground)",
+    axisTick: "color-mix(in oklab, var(--color-foreground) 65%, transparent)",
+  } as const;
+
   return (
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 16, right: 16, left: 0, bottom: 0 }}>
           <CartesianGrid
-            stroke="rgba(20, 18, 18, 0.08)"
+            stroke={palette.grid}
             vertical={false}
             strokeDasharray="4 4"
           />
@@ -36,22 +47,22 @@ export function WeightTrendChart({ data }: WeightTrendChartProps) {
             axisLine={false}
             tickLine={false}
             tickMargin={8}
-            tick={{ fontSize: 12, fill: "#6C6A6A" }}
+            tick={{ fontSize: 12, fill: palette.axisTick }}
           />
           <YAxis
             domain={["dataMin - 2", "dataMax + 2"]}
-            tick={{ fontSize: 12, fill: "#6C6A6A" }}
+            tick={{ fontSize: 12, fill: palette.axisTick }}
             axisLine={false}
             tickLine={false}
             width={36}
           />
           <Tooltip
-            cursor={{ strokeDasharray: "4 4", stroke: "rgba(20, 18, 18, 0.2)" }}
+            cursor={{ strokeDasharray: "4 4", stroke: palette.grid }}
             contentStyle={{
-              backgroundColor: "#FCF6F5",
+              backgroundColor: palette.tooltipBackground,
               borderRadius: 12,
-              border: "1px solid rgba(20,18,18,0.08)",
-              color: "#141212",
+              border: `1px solid ${palette.tooltipBorder}`,
+              color: palette.tooltipText,
             }}
             formatter={(value, name) => {
               const label =
@@ -66,7 +77,7 @@ export function WeightTrendChart({ data }: WeightTrendChartProps) {
           <Line
             type="monotone"
             dataKey="weight"
-            stroke="#141212"
+            stroke={palette.weight}
             strokeWidth={2}
             dot={{ r: 3 }}
             activeDot={{ r: 5 }}
@@ -74,7 +85,7 @@ export function WeightTrendChart({ data }: WeightTrendChartProps) {
           <Line
             type="monotone"
             dataKey="trend"
-            stroke="#6C6A6A"
+            stroke={palette.trend}
             strokeDasharray="5 4"
             strokeWidth={2}
             dot={false}
@@ -82,7 +93,7 @@ export function WeightTrendChart({ data }: WeightTrendChartProps) {
           <Line
             type="monotone"
             dataKey="goal"
-            stroke="#FA4616"
+            stroke={palette.goal}
             strokeWidth={2}
             dot={false}
           />

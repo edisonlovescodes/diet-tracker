@@ -15,7 +15,7 @@ type DaySelectorProps = {
 
 export function DaySelector({ week, days, onSelect }: DaySelectorProps) {
   return (
-    <section className="rounded-3xl border border-black/5 bg-white p-5 shadow-sm shadow-black/5">
+    <section className="surface-card rounded-3xl p-5">
       <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wide text-foreground/60">
         <span>Week {week}</span>
         <span>{days.find((day) => day.isActive)?.dateLabel ?? ""}</span>
@@ -33,7 +33,7 @@ export function DaySelector({ week, days, onSelect }: DaySelectorProps) {
               className={[
                 "flex flex-col items-center gap-1 rounded-2xl px-2 py-3 text-xs font-semibold transition-all",
                 state === "active" && "bg-foreground text-background shadow-md",
-                state === "complete" && "border border-foreground/10 bg-muted/60",
+                state === "complete" && "surface-subtle border border-[color:var(--gray-a5)]",
                 state === "default" && "text-foreground/40",
               ]
                 .filter(Boolean)
@@ -43,7 +43,7 @@ export function DaySelector({ week, days, onSelect }: DaySelectorProps) {
               onClick={() => onSelect?.(day.isoDate)}
             >
               <span>{day.label}</span>
-              <span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-foreground/70">
+              <span className="rounded-full surface-subtle px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-foreground/70">
                 {day.dateLabel}
               </span>
               {typeof day.compliance === "number" ? (

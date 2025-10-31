@@ -100,6 +100,9 @@ export function MealForm({
   });
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const inputClass = "field-control text-base";
+  const textAreaClass = "field-control text-sm";
+  const smallFieldClass = "field-control text-sm";
 
   const totals = useMemo(() => {
     return items.reduce(
@@ -350,7 +353,7 @@ export function MealForm({
           onChange={(event) => setName(event.target.value)}
           maxLength={120}
           placeholder="Breakfast"
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className={inputClass}
         />
       </div>
 
@@ -362,7 +365,7 @@ export function MealForm({
           type="datetime-local"
           value={loggedAt}
           onChange={(event) => setLoggedAt(event.target.value)}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className={inputClass}
         />
       </div>
 
@@ -375,7 +378,7 @@ export function MealForm({
           onChange={(event) => setNotes(event.target.value)}
           rows={3}
           maxLength={240}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className={textAreaClass}
           placeholder="Lift day pre-workout meal."
         />
         <span className="text-right text-xs text-foreground/50">
@@ -392,17 +395,17 @@ export function MealForm({
           value={searchQuery}
           onChange={(event) => handleSearch(event.target.value)}
           placeholder="Search chicken, rice, etc."
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className={inputClass}
         />
         {searchError ? (
           <p className="text-xs text-accent">{searchError}</p>
         ) : null}
         {searchResults.length ? (
-          <ul className="mt-2 space-y-2 rounded-2xl border border-black/5 bg-muted/40 p-3 text-sm">
+          <ul className="mt-2 space-y-2 rounded-2xl border border-[color:var(--gray-a5)] surface-subtle p-3 text-sm">
             {searchResults.map((result) => (
               <li
                 key={`${result.type}-${result.id}`}
-                className="flex items-center justify-between gap-3 rounded-2xl bg-white px-3 py-2 shadow-sm shadow-black/5"
+                className="flex items-center justify-between gap-3 rounded-2xl surface-subtle px-3 py-2"
               >
                 <div>
                   <p className="font-semibold text-foreground">{result.name}</p>
@@ -445,10 +448,7 @@ export function MealForm({
           {items.map((item) => {
             const totals = scaleMacros(item.macrosPerUnit, item.quantity);
             return (
-              <div
-                key={item.key}
-                className="rounded-3xl border border-black/10 bg-white p-4 shadow-sm shadow-black/5"
-              >
+              <div key={item.key} className="surface-card rounded-3xl p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-base font-semibold text-foreground">
@@ -491,7 +491,7 @@ export function MealForm({
                           Number(event.target.value),
                         )
                       }
-                      className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-inner outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                      className={smallFieldClass}
                     />
                   </label>
                   {MACRO_INPUTS.map(({ key, label }) => (
@@ -512,7 +512,7 @@ export function MealForm({
                             Number(event.target.value),
                           )
                         }
-                        className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-inner outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                        className={smallFieldClass}
                         disabled={item.source !== "QUICK_ADD"}
                       />
                     </label>
@@ -531,14 +531,14 @@ export function MealForm({
             );
           })}
           {!items.length && (
-            <p className="rounded-3xl border border-dashed border-foreground/20 bg-muted/40 px-4 py-5 text-center text-sm text-foreground/50">
+            <p className="rounded-3xl border border-dashed border-foreground/20 surface-quiet px-4 py-5 text-center text-sm text-foreground/50">
               Search foods or add a quick macro entry to build this meal.
             </p>
           )}
         </div>
       </div>
 
-      <div className="rounded-3xl border border-black/10 bg-muted/40 p-4">
+      <div className="surface-card rounded-3xl p-4">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground/60">
           Quick add
         </h3>
@@ -553,7 +553,7 @@ export function MealForm({
             onChange={(event) =>
               setQuickAdd((prev) => ({ ...prev, name: event.target.value }))
             }
-            className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-inner outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 sm:col-span-2"
+            className={`${smallFieldClass} sm:col-span-2`}
           />
           <input
             type="text"
@@ -562,7 +562,7 @@ export function MealForm({
             onChange={(event) =>
               setQuickAdd((prev) => ({ ...prev, brand: event.target.value }))
             }
-            className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-inner outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className={smallFieldClass}
           />
           {QUICK_ADD_FIELDS.map(({ key, label }) => (
             <input
@@ -575,7 +575,7 @@ export function MealForm({
               onChange={(event) =>
                 setQuickAdd((prev) => ({ ...prev, [key]: event.target.value }))
               }
-              className="rounded-2xl border border-black/10 bg-white px-3 py-2 text-sm shadow-inner outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className={smallFieldClass}
             />
           ))}
           <button
@@ -588,7 +588,7 @@ export function MealForm({
         </form>
       </div>
 
-      <div className="flex items-center justify-between rounded-3xl border border-black/10 bg-white px-5 py-4 text-sm font-semibold shadow-sm shadow-black/5">
+      <div className="surface-card flex items-center justify-between rounded-3xl px-5 py-4 text-sm font-semibold">
         <span className="text-foreground/60">Meal totals</span>
         <div className="flex gap-4 text-foreground">
           <span>P {totals.protein.toFixed(1)}g</span>
@@ -618,7 +618,7 @@ export function MealForm({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-foreground/60 transition hover:border-foreground/20 hover:text-foreground"
+          className="rounded-full border border-[color:var(--gray-a5)] px-4 py-2 text-sm font-semibold text-foreground/60 transition hover:border-accent/50 hover:text-foreground"
           disabled={isPending}
         >
           Cancel

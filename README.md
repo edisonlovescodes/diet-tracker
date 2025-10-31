@@ -1,6 +1,6 @@
-## Macro Tracker for Whop
+## Diet Tracker for Creators (Whop)
 
-Creator-facing nutrition tracker designed to run inside a Whop experience. It authenticates members through Whop’s secure iframe headers, stores meals/weigh-ins in MongoDB (Prisma), and surfaces daily/weekly macro insights.
+A simple, creator-branded nutrition tracker that runs inside a Whop experience. Members log meals and weigh-ins, build streaks, and see compliance at a glance so you can run lightweight challenges or accountability check-ins without extra tooling.
 
 ### Requirements
 - Node 20+

@@ -48,7 +48,7 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
   ];
 
   return (
-    <article className="rounded-3xl border border-black/5 bg-white p-5 shadow-sm shadow-black/5">
+    <article className="surface-card rounded-3xl p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-wide text-foreground/50">
@@ -105,7 +105,7 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
         {meal.foods.map((food) => (
           <div
             key={food.id}
-            className="flex items-center justify-between rounded-2xl bg-muted/60 px-3 py-2"
+            className="flex items-center justify-between rounded-2xl surface-subtle px-3 py-2"
           >
             <div>
               <p className="font-medium text-foreground">{food.name}</p>
@@ -121,7 +121,7 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
           </div>
         ))}
         {!meal.foods.length && (
-          <p className="rounded-2xl border border-dashed border-foreground/20 bg-muted/40 px-3 py-4 text-center text-xs text-foreground/50">
+          <p className="rounded-2xl border border-dashed border-foreground/20 surface-quiet px-3 py-4 text-center text-xs text-foreground/50">
             No foods logged yet. Add items to track macros.
           </p>
         )}

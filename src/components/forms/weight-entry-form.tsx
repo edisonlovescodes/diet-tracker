@@ -114,7 +114,7 @@ export function WeightEntryForm({
           step="0.1"
           value={weight}
           onChange={(event) => setWeight(event.target.value)}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="field-control text-base"
           placeholder="185.4"
           required
         />
@@ -128,7 +128,7 @@ export function WeightEntryForm({
           type="datetime-local"
           value={recordedFor}
           onChange={(event) => setRecordedFor(event.target.value)}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="field-control text-base"
         />
       </div>
 
@@ -141,7 +141,7 @@ export function WeightEntryForm({
           maxLength={140}
           rows={3}
           onChange={(event) => setNote(event.target.value)}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm leading-5 shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="field-control text-sm leading-5"
           placeholder="Morning weigh-in, post-restroom."
         />
         <span className="text-right text-xs text-foreground/50">
@@ -169,7 +169,7 @@ export function WeightEntryForm({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-foreground/60 transition hover:border-foreground/20 hover:text-foreground"
+          className="rounded-full border border-[color:var(--gray-a5)] px-4 py-2 text-sm font-semibold text-foreground/60 transition hover:border-accent/50 hover:text-foreground"
           disabled={isPending}
         >
           Cancel

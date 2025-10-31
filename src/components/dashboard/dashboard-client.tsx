@@ -189,13 +189,13 @@ export function DashboardClient(props: DashboardClientProps) {
               })}
             </p>
             <h1 className="text-3xl font-semibold text-foreground md:text-4xl">
-              Dialed-in Nutrition
+              Stay On Track Together
             </h1>
             <p className="mt-1 text-sm text-foreground/60">
-              Keep logging meals and weigh-ins to stay aligned with your RP targets.
+              Daily logs power streaks, compliance, and check-ins for your community.
             </p>
           </div>
-          <div className="rounded-2xl border border-black/5 bg-white px-5 py-3 text-sm shadow-sm shadow-black/5">
+          <div className="surface-card rounded-2xl px-5 py-3 text-sm">
             <p className="text-xs uppercase tracking-wide text-foreground/50">
               Today&apos;s Weight
             </p>
@@ -220,7 +220,7 @@ export function DashboardClient(props: DashboardClientProps) {
             <button
               type="button"
               onClick={() => openWeightModal(latestWeight ?? undefined)}
-              className="mt-3 rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+            className="mt-3 rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
             >
               {latestWeight ? "Edit latest" : "Log weigh-in"}
             </button>
@@ -253,14 +253,14 @@ export function DashboardClient(props: DashboardClientProps) {
             <button
               type="button"
               onClick={openNewMeal}
-              className="flex h-16 w-full items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-foreground/20 bg-white/60 text-sm font-semibold text-foreground/70 transition hover:border-accent hover:text-accent"
+              className="flex h-16 w-full items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-foreground/20 surface-subtle text-sm font-semibold text-foreground/70 transition hover:border-accent hover:text-accent"
             >
               + Log another meal
             </button>
           </div>
 
           <aside className="flex flex-col gap-5">
-            <div className="rounded-3xl border border-black/5 bg-white p-5 shadow-sm shadow-black/5">
+            <div className="surface-card rounded-3xl p-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-semibold text-foreground">
@@ -273,12 +273,12 @@ export function DashboardClient(props: DashboardClientProps) {
                 <button
                   type="button"
                   onClick={() => openWeightModal()}
-                  className="rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+                  className="rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
                 >
                   Log weigh-in
                 </button>
               </div>
-              <div className="mt-4 rounded-2xl border border-black/5 bg-background/60 p-4">
+              <div className="mt-4 rounded-2xl surface-subtle p-4">
                 {weightSeries.length ? (
                   <WeightTrendChart data={weightSeries} />
                 ) : (
@@ -295,7 +295,7 @@ export function DashboardClient(props: DashboardClientProps) {
                     .map((entry) => (
                       <li
                         key={entry.id}
-                        className="flex items-center justify-between rounded-2xl bg-muted/60 px-3 py-2"
+                        className="flex items-center justify-between rounded-2xl surface-subtle px-3 py-2"
                       >
                         <span>
                           {new Date(entry.recordedFor).toLocaleDateString(undefined, {
@@ -316,7 +316,7 @@ export function DashboardClient(props: DashboardClientProps) {
               ) : null}
             </div>
 
-            <div className="rounded-3xl border border-black/5 bg-white p-5 shadow-sm shadow-black/5">
+            <div className="surface-card rounded-3xl p-5">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
                 Compliance
               </h3>
@@ -329,11 +329,11 @@ export function DashboardClient(props: DashboardClientProps) {
                 </span>
               </div>
               <p className="mt-2 text-sm text-foreground/60">
-                Log every meal to boost streaks. You&apos;re staying on pace with your targets.
+                Consistency beats perfection—log every meal to keep your streak alive.
               </p>
             </div>
 
-            <div className="rounded-3xl border border-black/5 bg-white p-5 shadow-sm shadow-black/5">
+            <div className="surface-card rounded-3xl p-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground/60">
                   My foods
@@ -341,7 +341,7 @@ export function DashboardClient(props: DashboardClientProps) {
                 <button
                   type="button"
                   onClick={() => openCustomFoodModal()}
-                  className="rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+                  className="rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
                 >
                   Add custom
                 </button>
@@ -351,7 +351,7 @@ export function DashboardClient(props: DashboardClientProps) {
                   customFoods.slice(0, 6).map((food) => (
                     <li
                       key={food.id}
-                      className="flex items-center justify-between rounded-2xl bg-muted/40 px-3 py-2"
+                      className="flex items-center justify-between rounded-2xl surface-subtle px-3 py-2"
                     >
                       <div>
                         <p className="font-semibold text-foreground">
@@ -365,14 +365,14 @@ export function DashboardClient(props: DashboardClientProps) {
                       <button
                         type="button"
                         onClick={() => openCustomFoodModal(food)}
-                        className="rounded-full px-3 py-1 text-xs font-semibold text-foreground/40 transition hover:text-accent"
+                        className="rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/40 transition hover:border-accent hover:text-accent"
                       >
                         Edit
                       </button>
                     </li>
                   ))
                 ) : (
-                  <li className="rounded-2xl border border-dashed border-foreground/20 bg-muted/30 px-3 py-3 text-center text-[11px] text-foreground/50">
+                  <li className="rounded-2xl border border-dashed border-foreground/20 surface-quiet px-3 py-3 text-center text-[11px] text-foreground/50">
                     Save your go-to meals as custom foods for quicker logging.
                   </li>
                 )}

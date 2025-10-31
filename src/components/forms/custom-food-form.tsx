@@ -142,7 +142,7 @@ export function CustomFoodForm({
           value={form.name}
           onChange={(event) => update("name", event.target.value)}
           maxLength={120}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="field-control text-base"
           placeholder="Overnight oats"
           required
         />
@@ -155,7 +155,7 @@ export function CustomFoodForm({
           value={form.brand}
           onChange={(event) => update("brand", event.target.value)}
           maxLength={120}
-          className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="field-control text-base"
           placeholder="Homemade"
         />
       </div>
@@ -169,7 +169,7 @@ export function CustomFoodForm({
             step="0.1"
             value={form.servingSize}
             onChange={(event) => update("servingSize", event.target.value)}
-            className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="field-control text-base"
             required
           />
         </label>
@@ -179,7 +179,7 @@ export function CustomFoodForm({
             type="text"
             value={form.servingUnit}
             onChange={(event) => update("servingUnit", event.target.value)}
-            className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="field-control text-base"
             required
           />
         </label>
@@ -198,7 +198,7 @@ export function CustomFoodForm({
               step="0.1"
               value={form[macro.key]}
               onChange={(event) => update(macro.key, event.target.value)}
-              className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-base shadow-inner shadow-black/5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              className="field-control text-base"
             />
           </label>
         ))}
@@ -224,7 +224,7 @@ export function CustomFoodForm({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-foreground/60 transition hover:border-foreground/20 hover:text-foreground"
+          className="rounded-full border border-[color:var(--gray-a5)] px-4 py-2 text-sm font-semibold text-foreground/60 transition hover:border-accent/50 hover:text-foreground"
           disabled={isPending}
         >
           Cancel

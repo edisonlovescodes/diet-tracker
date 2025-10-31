@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from "react";
+import { Dialog } from "frosted-ui";
 
 type ModalProps = {
   open: boolean;
@@ -19,49 +19,38 @@ export function Modal({
   children,
   footer,
 }: ModalProps) {
-  useEffect(() => {
-    function handleKey(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
-
-    if (open) {
-      document.addEventListener("keydown", handleKey);
-    }
-
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [open, onClose]);
-
-  if (!open) {
-    return null;
-  }
+  const size = widthClassName === "max-w-lg" ? "3" : "4";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 backdrop-blur">
-      <div
-        role="dialog"
-        aria-modal="true"
-        className={`w-full rounded-3xl border border-black/5 bg-white shadow-xl shadow-black/10 ${widthClassName}`}
+    <Dialog.Root open={open} onOpenChange={(value) => (value ? undefined : onClose())}>
+      <Dialog.Content
+        size={size}
+        className={`flex max-h-[80vh] w-full flex-col gap-0 overflow-hidden rounded-3xl ${widthClassName}`}
       >
-        <div className="flex items-center justify-between border-b border-black/5 px-6 py-4">
-          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border border-transparent p-2 text-sm text-foreground/60 transition hover:border-foreground/10 hover:text-foreground"
-            aria-label="Close"
-          >
-            ✕
-          </button>
-        </div>
+        {(title || onClose) && (
+          <div className="flex items-center justify-between border-b border-[color:var(--gray-a5)] px-6 py-4">
+            {title ? (
+              <Dialog.Title className="text-lg font-semibold text-foreground">
+                {title}
+              </Dialog.Title>
+            ) : (
+              <span />
+            )}
+            <Dialog.Close
+              aria-label="Close"
+              className="rounded-full border border-transparent p-2 text-sm text-foreground/60 transition hover:border-accent/40 hover:text-foreground"
+            >
+              ✕
+            </Dialog.Close>
+          </div>
+        )}
         <div className="max-h-[70vh] overflow-y-auto px-6 py-5">{children}</div>
         {footer ? (
-          <div className="flex items-center justify-end gap-3 border-t border-black/5 px-6 py-4">
+          <div className="flex items-center justify-end gap-3 border-t border-[color:var(--gray-a5)] px-6 py-4">
             {footer}
           </div>
         ) : null}
-      </div>
-    </div>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }

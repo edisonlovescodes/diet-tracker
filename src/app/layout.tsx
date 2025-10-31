@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "frosted-ui/styles.css";
 import "./globals.css";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Whop Macro Tracker",
+  title: "Diet Tracker for Creators",
   description:
-    "Nutrition logging for any Whop community—track meals, macros, and weigh-ins securely.",
+    "Creator-branded nutrition logging for Whop communities—meals, weigh-ins, streaks, and compliance in one place.",
 };
 
 export default function RootLayout({
@@ -25,10 +27,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

@@ -26,7 +26,7 @@ export async function DashboardPage({
 }: DashboardPageProps) {
   const session = await getOptionalSession({ experienceId });
   if (!session) {
-    return <GuestLanding experienceId={experienceId} />;
+    return <GuestLanding />;
   }
   const params = searchParamsPromise ? await searchParamsPromise : undefined;
 
@@ -184,11 +184,11 @@ export async function DashboardPage({
       console.warn(
         "[dashboard] Prisma configuration missing; falling back to guest landing.",
       );
-      return <GuestLanding experienceId={experienceId} />;
+      return <GuestLanding />;
     }
 
     console.error("[dashboard] Failed to load user data", error);
-    return <DashboardUnavailable experienceId={experienceId} />;
+      return <DashboardUnavailable />;
   }
 }
 
@@ -464,44 +464,44 @@ function getWeekNumber(date: Date) {
   return 1 + Math.round(diff / (7 * 24 * 60 * 60 * 1000));
 }
 
-function GuestLanding({ experienceId }: { experienceId?: string }) {
+function GuestLanding() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="max-w-lg space-y-6 rounded-3xl border border-black/5 bg-white p-10 text-center shadow-sm shadow-black/5">
+      <div className="surface-card max-w-lg space-y-6 rounded-3xl p-10 text-center">
         <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-accent">
-          Whop Macro Tracker
+          Diet Tracker for Creators
         </span>
         <h1 className="text-3xl font-semibold text-foreground">
-          Sign in through Whop to start tracking
+          Launch from your Whop community to start logging
         </h1>
         <p className="text-sm leading-6 text-foreground/70">
-          Launch this tracker from your Whop account so we can keep your meals
-          and weigh-ins tied to your membership. Open the app from your
-          community’s Apps tab and your data will sync instantly.
+          Open this tracker inside your Whop community so meals and weigh-ins tie
+          directly to your membership. Once you log that first entry, streaks and
+          compliance start tracking automatically.
         </p>
-        <div className="space-y-2 rounded-2xl border border-dashed border-foreground/20 bg-muted/40 p-4 text-left text-xs text-foreground/60">
-          <p className="font-semibold text-foreground/70">How to get in:</p>
+        <div className="space-y-2 rounded-2xl border border-dashed border-foreground/20 surface-quiet p-4 text-left text-xs text-foreground/60">
+          <p className="font-semibold text-foreground/70">How to hop in:</p>
           <ol className="list-decimal space-y-1 pl-4">
             <li>Sign in at <span className="font-semibold">whop.com</span>.</li>
-            <li>Open Macro Tracker from your community&apos;s Apps tab.</li>
-            <li>Log your first meal or weigh-in to see live stats.</li>
+            <li>Open the Diet Tracker app from your community&apos;s Apps tab.</li>
+            <li>Log your first meal or weigh-in to unlock streaks and insights.</li>
           </ol>
         </div>
         <p className="text-xs text-foreground/50">
-          Need access? Ask your community host to grant the app to your
-          membership. Creators can test privately with Whop&apos;s dev proxy.
+          Need access? Ask your host to grant the app to your membership. Creators
+          can test privately with Whop&apos;s dev proxy.
         </p>
       </div>
     </main>
   );
 }
 
-function DashboardUnavailable({ experienceId }: { experienceId?: string }) {
+function DashboardUnavailable() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-6">
-      <div className="max-w-lg space-y-6 rounded-3xl border border-black/5 bg-white p-10 text-center shadow-sm shadow-black/5">
+      <div className="surface-card max-w-lg space-y-6 rounded-3xl p-10 text-center">
         <span className="inline-flex items-center gap-2 rounded-full bg-destructive/10 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-destructive">
-          Whop Macro Tracker
+          Diet Tracker for Creators
         </span>
         <h1 className="text-3xl font-semibold text-foreground">
           We can&apos;t load your dashboard right now

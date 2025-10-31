@@ -1,34 +1,59 @@
 @import "tailwindcss";
 
-:root {
-  --background: #fcf6f5;
-  --foreground: #141212;
-  --accent: #fa4616;
-  --muted: #efe6e4;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #141212;
-    --foreground: #fcf6f5;
-    --accent: #fa4616;
-    --muted: #272323;
-  }
+:root {
+  --color-background: var(--color-page-background, var(--gray-1));
+  --color-foreground: var(--gray-12);
+  --color-muted: color-mix(in oklab, var(--gray-3) 65%, transparent);
+  --color-accent: var(--accent-9);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
   min-height: 100vh;
+}
+
+.surface-card {
+  background: var(--color-panel, color-mix(in oklab, var(--gray-2) 90%, white));
+  border: 1px solid color-mix(in oklab, var(--gray-a5) 38%, transparent);
+  box-shadow:
+    0 1px 3px 0 var(--black-a4),
+    0 12px 32px -20px var(--black-a7);
+  color: inherit;
+}
+
+.surface-subtle {
+  background: color-mix(in oklab, var(--color-panel) 85%, transparent);
+}
+
+.surface-quiet {
+  background: color-mix(in oklab, var(--gray-a3) 40%, transparent);
+}
+
+.field-control {
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklab, var(--gray-a5) 42%, transparent);
+  background: var(--color-panel, color-mix(in oklab, var(--gray-2) 90%, transparent));
+  color: inherit;
+  padding: 0.75rem 1rem;
+  box-shadow: inset 0 1px 0 var(--white-a3), inset 0 -1px 0 var(--black-a3);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.field-control:focus-visible {
+  outline: none;
+  border-color: var(--accent-8);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--accent-a5) 60%, transparent),
+    0 0 0 4px color-mix(in oklab, var(--accent-a3) 50%, transparent);
 }

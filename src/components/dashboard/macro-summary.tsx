@@ -23,7 +23,7 @@ export function MacroSummary({ target, consumed, macro }: MacroSummaryProps) {
     target > 0 ? Math.min(100, Math.round((consumed / target) * 100)) : 0;
 
   return (
-    <div className="rounded-2xl border border-black/5 bg-white px-4 py-3 shadow-sm shadow-black/5">
+    <div className="surface-card rounded-2xl px-4 py-3">
       <div className="flex items-center justify-between text-sm text-foreground/70">
         <span>{labels[macro]}</span>
         <span>{percent}%</span>
@@ -37,7 +37,7 @@ export function MacroSummary({ target, consumed, macro }: MacroSummaryProps) {
         </span>
         <span className="text-sm text-foreground/50">Target {target}g</span>
       </div>
-      <div className="mt-4 h-2 rounded-full bg-muted/70">
+      <div className="mt-4 h-2 rounded-full bg-muted">
         <div
           className={`h-2 rounded-full transition-all ${colors[macro]}`}
           style={{ width: `${percent}%` }}
