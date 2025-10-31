@@ -88,6 +88,7 @@ async function requireSessionFromHeaders(
     options?.experienceId ??
     null;
 
+  console.log("[session] Token verified, ensuring user exists:", validation.userId);
   const user = await ensureUser(validation.userId);
 
   if (!user.macroTarget) {
@@ -120,6 +121,7 @@ export async function getOptionalSession(options?: SessionOptions) {
     return await requireSession(options);
   } catch (error) {
     if (error instanceof UnauthorizedError) {
+      console.warn("[session] UnauthorizedError caught:", error.message);
       return null;
     }
     if (error instanceof WhopConfigurationError) {
@@ -134,19 +136,24 @@ export async function getOptionalSession(options?: SessionOptions) {
       );
       return null;
     }
+    console.error("[session] Unexpected error in getOptionalSession:", error);
     throw error;
   }
 }
 
 async function ensureUser(id: string) {
+  console.log("[session] ensureUser called for:", id);
   const existing = await prisma.user.findUnique({
     where: { id },
     include: { macroTarget: true },
   });
 
   if (existing) {
+    console.log("[session] User found in database:", id);
     return existing;
   }
+
+  console.log("[session] User not found, creating new user:", id);
 
   const profile = await fetchWhopProfile(id);
   const profileEmail =
