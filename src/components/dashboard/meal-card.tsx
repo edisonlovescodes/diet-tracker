@@ -82,7 +82,7 @@ export function MealCard({ meal, onEdit, onDelete }: MealCardProps) {
                 <button
                   type="button"
                   onClick={() => onEdit(meal.id)}
-                  className="rounded-full border border-foreground/10 px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+                  className="rounded-full bg-[color:var(--accent-4)] px-3 py-1 text-xs font-semibold text-[color:var(--accent-12)] transition hover:bg-[color:var(--accent-5)]"
                 >
                   Edit
                 </button>

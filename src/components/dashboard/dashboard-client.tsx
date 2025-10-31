@@ -220,7 +220,7 @@ export function DashboardClient(props: DashboardClientProps) {
             <button
               type="button"
               onClick={() => openWeightModal(latestWeight ?? undefined)}
-            className="mt-3 rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+              className="mt-3 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-background transition hover:bg-[color:var(--accent-10)]"
             >
               {latestWeight ? "Edit latest" : "Log weigh-in"}
             </button>
@@ -273,7 +273,7 @@ export function DashboardClient(props: DashboardClientProps) {
                 <button
                   type="button"
                   onClick={() => openWeightModal()}
-                  className="rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+                  className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-background transition hover:bg-[color:var(--accent-10)]"
                 >
                   Log weigh-in
                 </button>
@@ -341,7 +341,7 @@ export function DashboardClient(props: DashboardClientProps) {
                 <button
                   type="button"
                   onClick={() => openCustomFoodModal()}
-                  className="rounded-full border border-[color:var(--gray-a5)] px-3 py-1 text-xs font-semibold text-foreground/60 transition hover:border-accent hover:text-accent"
+                  className="rounded-full bg-[color:var(--accent-4)] px-3 py-1 text-xs font-semibold text-[color:var(--accent-11)] transition hover:bg-[color:var(--accent-5)]"
                 >
                   Add custom
                 </button>
